@@ -1,0 +1,18 @@
+
+use StdIO : all ;
+use Array : all ;
+
+int main ()
+{
+    vect = [0 ,1 ,2 ,3 ,4 ,5 ,6 ,7 ,8 ,9, 10, 11];
+    mat = reshape([3, 4], vect);
+    print ( mat );
+
+    concat_v = mat ++ mat;
+    print(concat_v);
+
+    concat_h = {[i] -> mat[[i]] ++ reverse(mat)[[i]]};
+    print(concat_h);
+
+    return 0;
+}

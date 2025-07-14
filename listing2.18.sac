@@ -1,0 +1,24 @@
+
+use StdIO : all ;
+use Array : all ;
+
+int main ()
+{
+    weights = [[0, 1, 0], [1, 0, 1], [0, 1, 0]] / 1 ;
+
+    vect = [1, 2, 3, 4];
+
+    mat = [ vect, vect + 4, vect + 8, vect + 12 ];
+    print(mat);
+
+    lb = [1, 1];
+    ub = shape(mat) - 1;
+    print(lb);
+    print(ub);
+
+    mat = { iv -> sum({ ov -> weights[ov] * rotate(ov - 1, mat)[iv] }) / 4 | lb <= iv < ub;
+            iv -> mat[iv] };
+    print (mat);
+
+    return 0;
+}
