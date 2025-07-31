@@ -1,0 +1,70 @@
+use StdIO : all;
+use Array : all;
+use Math : {fabs};
+
+
+double phi(double x, double y) {
+    return x*x + y*y;
+}
+
+
+double rho(double a, double x, double y) {
+    return 6.0 - a * phi(x, y);
+}
+
+
+double get_coord(double h, double min, int i) {
+    return min + h * tod(i);
+}
+
+
+double max_diff(double[., .] grid, double h, double MIN) {
+    return with { 
+        ([0,0] <= i=[x,y] < shape(grid)): fabs(grid[i] - phi(get_coord(h, MIN, x), get_coord(h, MIN, y)));
+    }: fold(max, 0.0);
+}
+
+
+int main()
+{
+    a = 1e5;
+    eps = 1e-8;
+
+    N = 3000;
+    MIN = -1.0;
+    MAX = 1.0;
+
+    D = MAX - MIN;
+
+    h = D / tod(N - 1);
+    h_sq = h*h;
+
+    C = 1.0 / (2.0/h_sq + 2.0/h_sq + a);
+
+    grid = with {
+            ([0, 0] <= [x, y] <= [N-1, 0]): phi(get_coord(h, MIN, x), get_coord(h, MIN, y));
+            ([0, N-1] <= [x, y] <= [N-1, N-1]): phi(get_coord(h, MIN, x), get_coord(h, MIN, y));
+            ([0, 0] <= [x, y] <= [0, N-1]): phi(get_coord(h, MIN, x), get_coord(h, MIN, y));
+            ([N-1, 0] <= [x, y] <= [N-1, N-1]): phi(get_coord(h, MIN, x), get_coord(h, MIN, y));
+        }: genarray([N,N], 0.0);
+
+    if (N <= 13) {
+        print(grid);
+    }
+
+    for (i = 0; i < 1313; i++) {
+        grid = with {
+            ([1, 1] <= [x, y] < shape(grid) - 1) {
+                rho_ = rho(a, get_coord(h, MIN, x), get_coord(h, MIN, y));
+                new_val = C * ((grid[x+1, y] + grid[x-1, y]) / h_sq + (grid[x, y+1] + grid[x, y-1]) / h_sq - rho_);
+            }: new_val;
+        }: modarray(grid);
+    }
+
+    if (N <= 13) {
+        print(grid);
+    }
+    print(max_diff(grid, h, MIN));
+
+    return 0;
+}
